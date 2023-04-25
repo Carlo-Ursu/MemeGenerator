@@ -37,47 +37,19 @@ export default function Meme() {
         }))
     }
 
-    const [downloadPressed, setDownloadPressed] = React.useState(false);
-
     function downloadMeme() {
-        setDownloadPressed(true);
-    }
-
-    React.useEffect(() => {
-        if (!downloadPressed) {
-          return;
-        }
-      
-        const memeDiv = document.querySelector(".meme");
-        const memeImg = document.querySelector(".meme--image");
-        memeImg.crossOrigin = "anonymous";
-        const canvas = document.createElement('canvas');
-        canvas.width = memeDiv.offsetWidth;
-        canvas.height = memeDiv.offsetHeight;
-
-        memeImg.onload = () => {
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(memeImg, 0, 0, canvas.width, canvas.height);
-            ctx.font = "30px Impact";
-            ctx.fillStyle = "white";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "top";
-            let textWidth = ctx.measureText(meme.topText).width;
-            ctx.fillText(meme.topText, canvas.width / 2, 20);
-            ctx.textBaseline = "bottom";
-            textWidth = ctx.measureText(meme.bottomText).width;
-            ctx.fillText(meme.bottomText, canvas.width / 2, canvas.height - 20);
-            const imgData = canvas.toDataURL("image/png");
+        html2canvas(document.querySelector(".meme"), {
+            logging: true,
+            letterRendering: 1,
+            allowTaint: false,
+            useCORS: true
+        }).then(canvas => {
             const link = document.createElement("a");
-            link.href = imgData;
+            link.href = canvas.toDataURL("image/png");
             link.download = "meme.png";
             link.click();
-        };
-            
-        memeImg.src = memeImg.src;
-      }, [downloadPressed]);
-
-
+        });
+    }
 
 
     return (
